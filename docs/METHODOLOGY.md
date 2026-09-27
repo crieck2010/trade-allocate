@@ -1,4 +1,4 @@
-# METHODOLOGY — trade-allocate v0.1.0
+# METHODOLOGY — trade-allocate v0.2.0
 
 How the engine reasons, and the judgment calls baked into it. This is
 the companion to the README's `## The maths` (which states the
@@ -102,3 +102,40 @@ not merely claim it. Its threshold is policy, stated as policy.
   strategy is a different product).
 - It will not relax individual gates, under any configuration.
 - It will not allocate without evidence, even at weight ~0.
+
+## 9. Why marginal-diversification ranking (Occam's Desk §4)
+
+The master spec lives in `trade-agents/docs/design/OCCAMS_DESK.md`
+(§4); this section explains *why* the measurement exists, not how —
+the formulas are in `src/trade_allocate/marginal.py` and the README's
+§ The maths.
+
+**Why marginal, not standalone.** Ranking candidates by standalone
+Sharpe re-selects the same trade in different clothes: the second
+trend system looks brilliant on its own and adds nothing to a book
+that already trends. The marginal contribution —
+`Δ = Sharpe(book ∪ candidate) − Sharpe(book)`, both legs weighted by
+this allocator's own risk-parity machinery — prices the candidate in
+the only currency that matters: what it does to the book. A brilliant
+loner that duplicates the book scores ~0 here, by design.
+
+**Why correlation on returns, not labels.** Cousinship is a property
+of return streams, not of names. Two strategies can differ in symbol,
+strategy name, even thesis, and still be the same trade; conversely
+two "trend" strategies can be genuinely different trades. Pearson on
+aligned *daily strategy returns* is the machine's cousinship test,
+and the 0.6 cap is the blessed policy constant. It is deliberately
+stricter than it looks: at ρ = 0.6 the second strategy's independent
+variance is already down to 64%.
+
+**Why 126 days, fail-closed.** Short histories print flattering,
+meaningless correlations — with 60 observations no estimator saves
+you (see the Honest limitations). Six trading months is the minimum
+window in which a correlation estimate is even wrong *usefully*.
+Insufficient overlap is a refusal, not a down-weight: the engine says
+so instead of scoring it.
+
+**Why the engine doesn't judge the book.** `marginal_contribution`
+measures; `trade-agents` admits (the ε bar, the ρ cap, the complexity
+budget, the empty-book bootstrap). The constants live with the
+policy, the measurement lives here — one throat to choke for each.

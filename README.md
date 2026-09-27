@@ -179,6 +179,19 @@ losers fast, damp the churn.
   gate), portfolio max drawdown > −0.15, and diversification ratio
   `DR = Σwᵢσᵢ/σₚ ≥ 1.10` (policy, documented as such). DR = 1 means
   no diversification benefit was harvested at all.
+- *Marginal contribution* (`marginal.marginal_contribution`): for a
+  candidate against the current book,
+  `Δ = Sharpe(book ∪ candidate) − Sharpe(book)`, both legs weighted by
+  the allocator's own machinery (default risk parity over the
+  OAS-shrunk covariance — the same `allocate()` the book uses), on the
+  inner-joined daily panel. `max_correlation` is the largest Pearson
+  correlation between the candidate and any book member on aligned
+  daily strategy returns. Admission needs `Δ > ε` (default 0.05),
+  `maxρ < ρ_max` (default 0.6), and ≥ 126 overlapping trading days for
+  every candidate/book pair — insufficient overlap fails closed
+  (`admitted=False`, reason recorded). The engine measures; the
+  admission policy (ε, ρ_max, the complexity budget) lives with
+  `trade-agents` (Occam's Desk §4).
 
 **Honest limitations.** Correlation estimates from short strategy
 histories are fragile — shrinkage dampens the noise, it does not

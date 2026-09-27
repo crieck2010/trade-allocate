@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "trade-allocate"
-version = "0.1.0"
+version = "0.2.0"
 description = "Strategy allocator: allocate capital across validated strategies by co-movement — risk parity, HRP, equal weight"
 readme = "README.md"
 requires-python = ">=3.10"

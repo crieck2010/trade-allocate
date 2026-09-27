@@ -1,5 +1,35 @@
 # Changelog
 
+## v0.2.0 — 2026-09-27
+
+**Occam's Desk phase 3 (allocator side).** Exposes the
+marginal-diversification measurement that `trade-agents` uses for
+marginal PM ranking (master spec:
+`trade-agents/docs/design/OCCAMS_DESK.md` §4):
+
+- `src/trade_allocate/marginal.py` — `marginal_contribution(book_series,
+  candidate_id, candidate_series, method="risk_parity", ...)`:
+  `Δ = Sharpe(book ∪ candidate) − Sharpe(book)`, both legs weighted by
+  the allocator's own correlation-aware machinery (default risk parity
+  over the OAS-shrunk covariance — the same `allocate()` the book
+  uses), plus `max_correlation` (Pearson on aligned daily strategy
+  returns — the machine's cousinship test). Accepts
+  `{"dates","returns"}`, `{timestamp: return}`, or `[(timestamp,
+  return)]` streams. Fail-closed: < 126 overlapping trading days, empty
+  book, or degenerate streams return `admitted=False` with the reason
+  recorded — never a scored guess. The engine measures; the admission
+  policy (ε, ρ_max, complexity budget) stays with `trade-agents`.
+- `docs/METHODOLOGY.md` §9: why marginal ranking (standalone Sharpe
+  re-selects cousins), why correlation on returns not labels, why 126
+  days fail-closed, why the engine doesn't judge — with a cross-link to
+  the master spec instead of duplicating it.
+- README § The maths: the Δ / correlation / overlap formulas.
+
+Tests: 10 new (`tests/test_marginal.py`) — diversifier admitted, cousin
+rejected on correlation, useless candidate rejected on ε, insufficient
+overlap fails closed, empty book fails closed, all input shapes, equal
+weighting, custom thresholds, multi-member book.
+
 ## v0.1.0 — 2026-09-26
 
 Initial release: the strategy allocator — the portfolio brain of the

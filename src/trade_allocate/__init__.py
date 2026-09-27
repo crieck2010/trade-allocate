@@ -11,5 +11,19 @@ Plain data in, plain data out. Zero sibling imports.
 
 from __future__ import annotations
 
-__version__ = "0.1.0"
-__all__ = ["__version__"]
+from .marginal import (
+    DEFAULT_EPSILON,
+    DEFAULT_RHO_MAX,
+    MIN_OVERLAP_DAYS,
+    marginal_contribution,
+)
+
+__version__ = "0.2.0"
+__all__ = [
+    "__version__",
+    # Occam's Desk phase 3: marginal-diversification measurement (v0.2.0)
+    "marginal_contribution",
+    "MIN_OVERLAP_DAYS",
+    "DEFAULT_EPSILON",
+    "DEFAULT_RHO_MAX",
+]
