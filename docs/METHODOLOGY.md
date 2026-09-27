@@ -71,9 +71,21 @@ structurally no path that increases a breaching strategy's weight.
 We chose post-allocation zeroing over pre-allocation exclusion
 because the target mix is still informative (it shows what the book
 *would* be), while the final mix is what gets traded. The recorded
-reasons make the kill auditable.
+reasons make the invalidation auditable.
 
 ## 7. Why portfolio-level gates
+
+> **2026-09-27 note.** The suite adopted the two-tier validation framework
+> (`trade-strategies/docs/validation/GATES.md`). The "individual gates" this
+> section refers to are the **Tier-1 entry filter** (OOS Sharpe > 0.3,
+> maxDD shallower than −25%, DSR > 0.8, beat benchmark net, Sortino > 0.75);
+> the portfolio-level bar is the **Tier-2 promotion set** (portfolio Sharpe
+> > 1.0, portfolio maxDD < 15%, portfolio DSR ≥ 0.95 with `n_trials` counting
+> *all* strategy-selection trials, Sortino ≥ 1.5, Calmar ≥ 2.0, DR ≥ 1.10).
+> The hard rule is unchanged: entry requires machine-readable PASS evidence
+> against Tier-1, and this engine will not relax individual gates under any
+> configuration. Terminology: strategies are *validated* / *invalidated* /
+> *discarded*; "kill" is retired from this lane's vocabulary.
 
 Individual gates certify strategies; portfolio gates certify the
 *combination*. A mix can pass every strategy gate and still be
